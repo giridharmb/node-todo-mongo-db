@@ -1,25 +1,32 @@
+var express = require('express');
+var bodyParser = require('body-parser');
 
-mongoose = require('mongoose');
+var {mongoose}  = require('./db/mongoose');
+var {Todo} = require('./models/todo');
+var {User} = require('./models/user');
 
-mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+var app = express();
 
-var User = mongoose.model('User', {
-   email: {
-       type: String,
-       required: true,
-       trim: true,
-       minLength: 1
-   }
+app.use(bodyParser.json());
+
+app.post('/todos', (req, res) => {
+
+    console.log(req.body);
+
+    var todo = new Todo({
+        text: req.body.text
+    });
+
+    todo.save().then( (doc) => {
+        res.send(doc);
+    }, (err) => {
+        console.log("Could not save." , err);
+        res.status(400).send(err);
+    });
 });
 
-var user = new User({
-    email: 'giri@cloud.com'
-});
 
-user.save().then ( (doc) => {
-    console.log('Saved todo', JSON.stringify(doc, undefined, 4));
-}, (err) => {
-    console.log("Unable to save todo:" , err);
+app.listen(3000 , () => {
+   console.log("App Started on Port 3000.");
 });
