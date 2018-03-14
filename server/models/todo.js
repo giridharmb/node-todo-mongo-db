@@ -1,6 +1,11 @@
 var mongoose = require('mongoose');
 
 var Todo = mongoose.model('Todo', {
+    docid : {
+        type: Number,
+        required: true,
+        index: true
+    },
    text: {
        type: String,
        required: true,
